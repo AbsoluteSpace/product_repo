@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+percent_discount:
+  name: discount1
+  percent_discount: true
+  discount: 50
+  tags: tag1,tag2
+  all_tags: false
+  active: true
+
+amount_discount:
+  name: discount2
+  percent_discount: false
+  discount: 50.50
+  tags: tag1
+  all_tags: false
+  active: true

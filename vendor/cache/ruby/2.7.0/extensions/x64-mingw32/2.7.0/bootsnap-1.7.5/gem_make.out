@@ -1,0 +1,16 @@
+current directory: C:/Users/Q/Documents/shopify_final_site/image_repo_v2/vendor/cache/ruby/2.7.0/gems/bootsnap-1.7.5/ext/bootsnap
+C:/Ruby27-x64/bin/ruby.exe -I C:/Ruby27-x64/lib/ruby/2.7.0 -r ./siteconf20210518-4692-1eu3a3k.rb extconf.rb
+creating Makefile
+
+current directory: C:/Users/Q/Documents/shopify_final_site/image_repo_v2/vendor/cache/ruby/2.7.0/gems/bootsnap-1.7.5/ext/bootsnap
+make "DESTDIR=" clean
+
+current directory: C:/Users/Q/Documents/shopify_final_site/image_repo_v2/vendor/cache/ruby/2.7.0/gems/bootsnap-1.7.5/ext/bootsnap
+make "DESTDIR="
+generating bootsnap-x64-mingw32.def
+compiling bootsnap.c
+linking shared-object bootsnap/bootsnap.so
+
+current directory: C:/Users/Q/Documents/shopify_final_site/image_repo_v2/vendor/cache/ruby/2.7.0/gems/bootsnap-1.7.5/ext/bootsnap
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 bootsnap.so ./.gem.20210518-4692-whqz3i/bootsnap

@@ -1,0 +1,12 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+valid:
+  title: Product1
+  body: body
+  tags: tag1,tag2
+  price: 9.99
+  discount_price: 5.00
+  can_be_discounted: true
+  has_active_discount: true
+  file_location: /img/product1
+  active_discount_name: HalfOff
