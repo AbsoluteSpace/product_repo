@@ -16,6 +16,10 @@ class ProductTest < ActiveSupport::TestCase
 
   def setup
     @product = products(:valid)
+    @product_without_discount = products(:no_discount)
+    @product_without_tags = products(:no_tags)
+    @percent_discount = discounts(:percent_discount)
+    @amount_discount = discounts(:amount_discount)
   end
 
   test "valid product" do
@@ -32,5 +36,68 @@ class ProductTest < ActiveSupport::TestCase
     @product.discount_price = @product.price + 1
     refute @product.valid?, "Product should be invalid when discount price is larger than price."
     assert_not_nil @product.errors[:name], "Discount price greater than price should result in error."
+  end
+
+  test "product not discounted by discount without matching tags" do
+    @percent_discount.update_site_discounts
+
+    @product_without_tags.reload
+    refute @product_without_tags.has_active_discount
+  end
+
+  test "update product discount" do
+    refute @product_without_discount.has_active_discount
+
+    @product_without_discount.apply_discount(@percent_discount)
+
+    @product.reload
+    assert @product_without_discount.has_active_discount
+    assert @product_without_discount.discount_price == @product_without_discount.calculate_discount_price(@percent_discount)
+    assert @product_without_discount.active_discount_name == @percent_discount.name
+  end
+
+  test "don't apply discount greater than price" do
+    refute @product_without_discount.has_active_discount
+
+    @amount_discount.update_column(:discount, @product_without_discount.price + 1)
+    @product_without_discount.apply_discount(@amount_discount)
+
+    @product.reload
+    refute @product_without_discount.has_active_discount
+  end
+
+  test "no discount applied when discount doesn't reduce cost" do
+    @percent_discount.update_column(:discount, 0)
+    @product_without_discount.apply_discount(@percent_discount)
+
+    @product.reload
+    refute @product_without_discount.has_active_discount
+  end
+
+  test "discount doesn't apply to product that can't have discounts" do
+    @product.disable_discounts
+    @amount_discount.update_site_discounts
+
+    @product.reload
+    refute @product.has_active_discount
+  end
+
+  test "existing product that can now have discounts recieves largest discount" do
+    @product.disable_discounts
+    @product.enable_discounts
+
+    @product.reload
+    assert @product.has_active_discount
+    assert @product.active_discount_name = @percent_discount.name
+  end
+
+  test "largest discount is product-specific discount" do
+    @product.update_column(:discount_price, 0.01)
+    @product.apply_largest_discount
+
+    @product.reload
+    assert @product.has_active_discount
+    assert @product.active_discount_name = ""
+    assert @product.discount_price = 0.01
   end
 end

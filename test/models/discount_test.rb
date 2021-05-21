@@ -13,6 +13,9 @@ class DiscountTest < ActiveSupport::TestCase
   def setup
     @percent_discount = discounts(:percent_discount)
     @amount_discount = discounts(:amount_discount)
+    @product = products(:valid)
+    @product_without_tags = products(:no_tags)
+    @product_without_discount = products(:no_discount)
   end
 
   test "valid discount" do
@@ -37,6 +40,50 @@ class DiscountTest < ActiveSupport::TestCase
     assert @amount_discount.valid?
   end
 
-  # test for decimals up to 2 for discount
+  test "deactivated discount does not apply" do
+    @percent_discount.update_site_discounts
+
+    @percent_discount.update_column(:active, false)
+    @percent_discount.update_site_discounts
+
+    @product.reload
+    refute @product.has_active_discount, "Discount should not apply when it's inactive."
+    assert @product.active_discount_name == ""
+  end
+
+  test "discount with all_tags should apply to every product" do
+    @percent_discount.update_column(:all_tags, true)
+    @percent_discount.update_site_discounts
+    
+    @product.reload
+    @product_without_tags.reload
+
+    assert @product_without_tags.has_active_discount, "Discount should apply when all tags."
+    assert @product_without_tags.active_discount_name == @percent_discount.name
+    assert @product.has_active_discount, "Discount should apply when all tags."
+    assert @product.active_discount_name == @percent_discount.name
+  end
+
+  test "discount doesn't apply to product that can't be discounted" do
+    @percent_discount.update_column(:all_tags, true)
+    @product.disable_discounts
+
+    @percent_discount.update_site_discounts
+    
+    @product.reload
+    refute @product.has_active_discount, "Discount shouldn't discount product that can't be discounted."
+  end
+
+  test "updated discount should be reflected on products" do
+    @percent_discount.update_site_discounts
+    @product_without_discount.reload
+    assert @product_without_discount.has_active_discount
+
+    @percent_discount.update_column(:tags, "")
+    @percent_discount.update_site_discounts
+
+    @product_without_discount.reload
+    assert @product_without_discount.active_discount_name != @percent_discount.name
+  end
 
 end
