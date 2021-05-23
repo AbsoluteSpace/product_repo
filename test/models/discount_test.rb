@@ -9,6 +9,7 @@ class DiscountTest < ActiveSupport::TestCase
   should validate_presence_of(:tags)
   should allow_value(%w(true false)).for(:all_tags)
   should allow_value(%w(true false)).for(:active)
+  should have_many(:products)
 
   def setup
     @percent_discount = discounts(:percent_discount)
@@ -48,7 +49,7 @@ class DiscountTest < ActiveSupport::TestCase
 
     @product.reload
     refute @product.has_active_discount, "Discount should not apply when it's inactive."
-    assert @product.active_discount_name == ""
+    assert @product.discount.nil?
   end
 
   test "discount with all_tags should apply to every product" do
@@ -59,9 +60,9 @@ class DiscountTest < ActiveSupport::TestCase
     @product_without_tags.reload
 
     assert @product_without_tags.has_active_discount, "Discount should apply when all tags."
-    assert @product_without_tags.active_discount_name == @percent_discount.name
+    assert @product_without_tags.discount.name == @percent_discount.name
     assert @product.has_active_discount, "Discount should apply when all tags."
-    assert @product.active_discount_name == @percent_discount.name
+    assert @product.discount.name == @percent_discount.name
   end
 
   test "discount doesn't apply to product that can't be discounted" do
@@ -83,7 +84,7 @@ class DiscountTest < ActiveSupport::TestCase
     @percent_discount.update_site_discounts
 
     @product_without_discount.reload
-    assert @product_without_discount.active_discount_name != @percent_discount.name
+    assert @product_without_discount.discount.nil?
   end
 
 end

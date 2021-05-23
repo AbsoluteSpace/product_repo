@@ -2,11 +2,12 @@ class Discount < ApplicationRecord
     validates :name, :discount, :tags, presence: true
     validates :name, uniqueness: true
     validates_inclusion_of :percent_discount, in: [true, false]
-    validates :discount, format: { with: /\A\d+(?:\.\d{0,2})?\z/ }, numericality: { greater_than: 0 }
+    validates :discount, numericality: { greater_than: 0 }
     validate :percent_discount_is_at_most_100
     validate :tags_are_correct_format
     validates_inclusion_of :all_tags, in: [true, false]
     validates_inclusion_of :active, in: [true, false]
+    has_many :products
 
     def update_site_discounts
         Product.find_each do |product|
@@ -17,7 +18,7 @@ class Discount < ApplicationRecord
                 next
             end
 
-            if product.active_discount_name == self.name
+            if !product.discount.nil? && product.discount.id == self.id
                 remove_discount(product) if (self.tags.split(",") & product.tags.split(",")).empty?
                 next
             end
@@ -38,9 +39,9 @@ class Discount < ApplicationRecord
     private
 
     def remove_discount(product)
-        return if product.active_discount_name.to_s != self.name && !self.all_tags
+        return if product.discount.nil? || (product.discount.id != self.id && !self.all_tags)
 
-        product.update_discount_attributes(false, "", product.price)
+        product.update_discount_attributes(false, nil, product.price)
 
         product.apply_largest_discount
     end

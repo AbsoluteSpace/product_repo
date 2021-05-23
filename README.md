@@ -22,3 +22,5 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+these were the important actions that I came up with for a merchant who wants to apply discounts, then show code path for each one

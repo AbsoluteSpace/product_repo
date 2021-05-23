@@ -2,7 +2,6 @@ require "test_helper"
 
 class ProductTest < ActiveSupport::TestCase
   should validate_presence_of(:title)
-  should validate_uniqueness_of(:title)
   should validate_presence_of(:body)
   should validate_presence_of(:tags)
   should validate_presence_of(:file_location)
@@ -12,7 +11,7 @@ class ProductTest < ActiveSupport::TestCase
   should validate_numericality_of(:discount_price).is_greater_than(0)
   should allow_value(%w(true false)).for(:can_be_discounted)
   should allow_value(%w(true false)).for(:has_active_discount)
-  should validate_presence_of(:active_discount_name)
+  should belong_to(:discount).optional
 
   def setup
     @product = products(:valid)
@@ -53,7 +52,7 @@ class ProductTest < ActiveSupport::TestCase
     @product.reload
     assert @product_without_discount.has_active_discount
     assert @product_without_discount.discount_price == @product_without_discount.calculate_discount_price(@percent_discount)
-    assert @product_without_discount.active_discount_name == @percent_discount.name
+    assert @product_without_discount.discount.name == @percent_discount.name
   end
 
   test "don't apply discount greater than price" do
@@ -84,20 +83,22 @@ class ProductTest < ActiveSupport::TestCase
 
   test "existing product that can now have discounts recieves largest discount" do
     @product.disable_discounts
+    @product.reload
     @product.enable_discounts
 
     @product.reload
     assert @product.has_active_discount
-    assert @product.active_discount_name = @percent_discount.name
+    assert @product.discount.name = @percent_discount.name
   end
 
   test "largest discount is product-specific discount" do
-    @product.update_column(:discount_price, 0.01)
-    @product.apply_largest_discount
+    @product_without_discount.update_column(:discount_price, 0.01)
+    @product_without_discount.update_column(:has_active_discount, true)
+    @product_without_discount.apply_largest_discount
 
-    @product.reload
-    assert @product.has_active_discount
-    assert @product.active_discount_name = ""
-    assert @product.discount_price = 0.01
+    @product_without_discount.reload
+    assert @product_without_discount.has_active_discount
+    assert @product_without_discount.discount.nil?
+    assert @product_without_discount.discount_price = 0.01
   end
 end

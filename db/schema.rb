@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_18_042536) do
+ActiveRecord::Schema.define(version: 2021_05_22_185156) do
 
   create_table "discounts", force: :cascade do |t|
     t.string "name"
@@ -32,9 +32,10 @@ ActiveRecord::Schema.define(version: 2021_05_18_042536) do
     t.decimal "discount_price"
     t.boolean "can_be_discounted", default: true
     t.boolean "has_active_discount", default: false
-    t.string "active_discount_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "discount_id"
+    t.index ["discount_id"], name: "index_products_on_discount_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -50,4 +51,5 @@ ActiveRecord::Schema.define(version: 2021_05_18_042536) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "products", "discounts"
 end
