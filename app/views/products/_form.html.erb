@@ -1,0 +1,71 @@
+<%= render "shared/tooltip_warning" %>
+
+<%= form_with model: product do |form| %>
+    <div>
+    <span title="Title of the product."><%= form.label :title %></span><br>
+      <%= form.text_field :title %>
+      <% product.errors.full_messages_for(:title).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+  
+    <div>
+    <span title="Description of the product. Used for alt-text."><%= form.label :body %></span><br>
+      <%= form.text_area :body %><br>
+      <% product.errors.full_messages_for(:body).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+
+    <div>
+    <span title="Filepath to the product."><%= form.label :file_location %></span><br>
+      <%= form.text_area :file_location %><br>
+      <% product.errors.full_messages_for(:file_location).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+
+    <div>
+    <span title="The product's tags. Format like: tag1,tag2,..."><%= form.label :tags %></span><br>
+      <%= form.text_area :tags %><br>
+      <% product.errors.full_messages_for(:tags).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+
+    <div>
+    <span title="The price of the product in dollars."><%= form.label :price %></span><br>
+      <%= form.number_field :price, step: 0.01 %><br>
+      <% product.errors.full_messages_for(:price).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+
+    <div>
+    <span title="Check if this product should be excluded from all discounts. You can change this later."><%= form.label :can_be_discounted %></span><br>
+      <%= form.check_box :can_be_discounted %><br>
+      <% product.errors.full_messages_for(:can_be_discounted).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+
+    <div>
+    <span title="The discounted price of the product. Only used if discount checkbox is ticked. If more than one discount applies, the larger is used."><%= form.label :discount_price %></span><br>
+      <%= form.number_field :discount_price, step: 0.01 %><br>
+      <% product.errors.full_messages_for(:discount_price).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+
+    <div>
+    <span title="Check to enable the discount price above. Enabled automatically if a site-wide discount applies to this product."><%= form.label :has_active_discount %></span><br>
+      <%= form.check_box :has_active_discount %><br>
+      <% product.errors.full_messages_for(:has_active_discount).each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+  
+    <div>
+      <%= form.submit %>
+    </div>
+  <% end %>

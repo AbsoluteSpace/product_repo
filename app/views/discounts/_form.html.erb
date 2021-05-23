@@ -1,0 +1,60 @@
+<%= render "shared/tooltip_warning" %>
+
+<%= form_with model: discount do |form| %>
+
+  <div>
+    <span title="The discount's name."><%= form.label :name %></span><br>
+    <%= form.text_area :name %><br>
+    <% discount.errors.full_messages_for(:name).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <span title="Check if you want to use a percentage based discount. Uncheck for amount based."><%= form.label :percent_discount %></span><br>
+    <%= form.check_box :percent_discount %><br>
+    <% discount.errors.full_messages_for(:percent_discount).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <span title="Enter dollar amount to discount or percentage if it's percent based."><%= form.label :discount %></span><br>
+    <% if :percent_discount %>
+      <%= form.number_field :discount, step: 1 %><br>
+    <% else %>
+      <%= form.number_field :discount, step: 0.01 %><br>
+    <% end %>
+    <% discount.errors.full_messages_for(:discount).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <span title="Check if the discount should apply to all tags."><%= form.label :all_tags %></span><br>
+    <%= form.check_box :all_tags %><br>
+    <% discount.errors.full_messages_for(:all_tags).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <span title="Tags the discount will apply to. Format like: tag1,tag2,..."><%= form.label :tags %></span><br>
+    <%= form.text_area :tags %><br>
+    <% discount.errors.full_messages_for(:tags).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <span title="Check if you want the discount to take effect. Otherwise uncheck."><%= form.label :active %></span><br>
+    <%= form.check_box :active %><br>
+    <% discount.errors.full_messages_for(:active).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+  
+  <div>
+    <%= form.submit %>
+  </div>
+  <% end %>

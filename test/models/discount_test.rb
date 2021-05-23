@@ -6,7 +6,6 @@ class DiscountTest < ActiveSupport::TestCase
   should allow_value(%w(true false)).for(:percent_discount)
   should validate_presence_of(:discount)
   should validate_numericality_of(:discount).is_greater_than(0)
-  should validate_presence_of(:tags)
   should allow_value(%w(true false)).for(:all_tags)
   should allow_value(%w(true false)).for(:active)
   should have_many(:products)

@@ -1,1 +1,42 @@
-<h1>Show Discount</h1>
+<%= render "shared/header" %>
+<div>
+    <h1>Discount <%= @discount.id %></h1>
+
+    <p> This Discount is
+    <% if @discount.active%>
+    <span class="active-discount"> ACTIVE.</span>
+    <% else %>
+    <span class="inactive-discount"> NOT ACTIVE.</span>
+    <% end %>
+    </p>
+
+    <p>
+    <% if @discount.all_tags%>
+    All items
+    <% else %>
+    <% unless @discount.tags.nil?%>
+      Tags:
+      <% @discount.tags.split(",").each do |tag| %>
+        <% if tag == @discount.tags.split(",").last%>
+            <%= tag %>
+        <% else %>
+            <%= tag + ", " %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% end %>
+    <% if @discount.percent_discount %>
+      are discounted by <%= @discount.discount %>%
+    <% else %>
+      are discounted by $<%= @discount.discount %>
+    <% end %>
+    </p>
+
+    <ul>
+      <li><%= link_to "Edit", edit_discount_path(@discount) %></li>
+      <li><%= link_to "Destroy", discount_path(@discount),
+                  method: :delete,
+                  data: { confirm: "Are you sure?" } %></li>
+    </ul>
+
+   </div>

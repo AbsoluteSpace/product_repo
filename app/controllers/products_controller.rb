@@ -33,7 +33,7 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
 
     if @product.update(product_params)
-      @product.apply_largest_discount
+      @product.discount.nil? ? @product.apply_largest_discount : @product.apply_largest_discount(true)
       redirect_to @product
     else
       render :edit
