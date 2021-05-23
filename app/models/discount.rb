@@ -1,5 +1,5 @@
 class Discount < ApplicationRecord
-    validates :name, :discount, :tags, presence: true
+    validates :name, :discount, presence: true
     validates :name, uniqueness: true
     validates_inclusion_of :percent_discount, in: [true, false]
     validates :discount, numericality: { greater_than: 0 }
@@ -57,7 +57,7 @@ class Discount < ApplicationRecord
     def tags_are_correct_format
         return if tags.nil?
 
-        if Tags.new(tags).invalid_tags?
+        unless Tags.new(tags).valid?
             errors.add(:tags, "Tags must be a comma seperated list with only alphanumeric characters.")
             return 
         end

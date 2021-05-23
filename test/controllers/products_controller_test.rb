@@ -5,6 +5,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
 
   def setup
     @product = products(:valid)
+    @product_without_tags = products(:no_tags)
     @post_product = {title: @product.title, body: @product.body, tags: @product.tags,
     file_location: @product.file_location, price: @product.price,
     discount_price: @product.discount_price, can_be_discounted: @product.can_be_discounted,
@@ -110,6 +111,30 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     refute @product.has_active_discount
 
     patch "/products/#{@product.id}", params: {product: @post_product}
+    assert_response :redirect
+    follow_redirect!
+    assert_response :success
+    @product.reload
+    assert @product.has_active_discount
+  end
+
+  test "removing tags removes discount if no discount applies to all tags" do
+    sign_in users(:admin)
+    @post_product["tags"] = ""
+
+    patch "/products/#{@product.id}", params: {product: @post_product}
+    assert_response :redirect
+    follow_redirect!
+    assert_response :success
+    @product.reload
+    refute @product.has_active_discount
+  end
+
+  test "adding tags to discount should apply discount with matching tags" do
+    sign_in users(:admin)
+    @post_product["tags"] = "tag1"
+
+    patch "/products/#{@product_without_tags.id}", params: {product: @post_product}
     assert_response :redirect
     follow_redirect!
     assert_response :success

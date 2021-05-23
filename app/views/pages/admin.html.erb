@@ -1,0 +1,19 @@
+<%= render "shared/header" %>
+
+<% if current_user %>
+
+<div class="body">
+<%= link_to "Create new discount", new_discount_path %>
+<a href="/discounts"><h4>See discounts</h4></a>
+<%= link_to "New Product", new_product_path %><br><br>
+<br>
+<%= link_to "Sign out", destroy_user_session_path, method: :delete%>
+</div>
+
+<% else %>
+
+<%= link_to "Sign in", new_user_session_path %>
+
+<% end %>
+
+

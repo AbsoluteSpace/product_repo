@@ -1,17 +1,21 @@
 class Tags
+    attr_accessor :tags
+
     def initialize(tags)
         @tags = tags
     end
 
-    def invalid_tags?
+    def valid?
         @tags.split(",") do |tag|
-            return true unless is_correct_format(tag)
+            return false unless is_correct_format(tag)
         end
 
-        return false
+        return true
     end
 
+    private
+
     def is_correct_format(tag)
-        tag.match?(/\A[a-zA-Z0-9]*\z/)
+        tag.match?(/\A[\sa-zA-Z0-9]*\z/)
     end
 end

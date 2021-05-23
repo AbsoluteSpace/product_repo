@@ -1,1 +1,13 @@
-<h1>Product Index</h1>
+<%= render "shared/header" %>
+
+<div class="body">
+  <h2>Click on a product for more information</h2>
+</div>
+
+<section id="photos">
+  <% @products.each do |product| %>
+    <a href="/products/<%=product.id%>">
+      <img src="<%= product.file_location%>">
+    </a>
+  <% end %>
+</section>

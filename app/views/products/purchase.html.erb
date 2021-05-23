@@ -1,1 +1,27 @@
-<h1>Purchase Product</h1>
+<%= render "shared/header" %>
+
+<div class="body">
+<h1>Confirm purchase of: <%= @product.title %> for
+<% if @product.discount %>
+  $<%= @product.discount_price %>
+<% else %>
+  $<%= @product.price %>
+<% end %>
+</h1>
+
+<p>The interviewer discount reduces the price by 
+<% if @product.discount %>
+  $<%= @product.discount_price %>.
+<% else %>
+  $<%= @product.price %>.
+<% end %>
+Your new total is $0.00.</p>
+<p>Please enter the email you want the digital copy of <%= @product.title %> to be sent to, and the hit Enter.</p>
+
+<label for="email">Please enter your email:</label>
+<input type="email" id="email" name="email">
+
+<a href="/purchased">Enter</a>
+</div>
+
+<%= render "shared/footer" %>

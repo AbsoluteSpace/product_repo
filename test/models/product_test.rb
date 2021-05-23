@@ -3,11 +3,9 @@ require "test_helper"
 class ProductTest < ActiveSupport::TestCase
   should validate_presence_of(:title)
   should validate_presence_of(:body)
-  should validate_presence_of(:tags)
   should validate_presence_of(:file_location)
   should validate_presence_of(:price)
   should validate_numericality_of(:price).is_greater_than(0)
-  should validate_presence_of(:discount_price)
   should validate_numericality_of(:discount_price).is_greater_than(0)
   should allow_value(%w(true false)).for(:can_be_discounted)
   should allow_value(%w(true false)).for(:has_active_discount)
@@ -35,6 +33,12 @@ class ProductTest < ActiveSupport::TestCase
     @product.discount_price = @product.price + 1
     refute @product.valid?, "Product should be invalid when discount price is larger than price."
     assert_not_nil @product.errors[:name], "Discount price greater than price should result in error."
+  end
+
+  test "product can't have active discount without discount price." do
+    @product.discount_price = nil
+    refute @product.valid?, "Product should be invalid when has discount but none given."
+    assert_not_nil @product.errors[:name], "Has active discount without discount price should result in error."
   end
 
   test "product not discounted by discount without matching tags" do

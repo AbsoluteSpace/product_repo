@@ -1,11 +1,12 @@
 class Product < ApplicationRecord
-    validates :title, :body, :tags, :file_location, :price, :discount_price, presence: true
+    validates :title, :body, :file_location, :price, presence: true
     validate :tags_are_correct_format
     validates :price, numericality: { greater_than: 0 }
-    validates :discount_price, numericality: { greater_than: 0 }
-    validate :discount_price_less_than_price if :has_active_discount
+    validates :discount_price, numericality: { greater_than: 0 }, allow_nil: true
     validates_inclusion_of :can_be_discounted, in: [true, false]
     validates_inclusion_of :has_active_discount, in: [true, false]
+    validate :discount_price_less_than_price if :has_active_discount
+    validate :discount_price_present
     belongs_to :discount, optional: true
 
     def apply_discount(discount)
@@ -46,8 +47,13 @@ class Product < ApplicationRecord
         apply_largest_discount
     end
 
-    def apply_largest_discount
-        return unless self.can_be_discounted
+    def apply_largest_discount(refresh = false)
+        unless self.can_be_discounted
+            disable_discounts
+            return
+        end
+
+        update_discount_attributes(false, nil, self.price) if refresh
 
         current_discount_price = self.has_active_discount ? self.discount_price : self.price
         lowest_price = current_discount_price
@@ -85,14 +91,19 @@ class Product < ApplicationRecord
         end
 
         if discount_price > price
-            errors.add(:discount_price, "Discount price must be less than price.")
+            errors.add(:discount_price, "must be less than price.")
         end
+    end
+
+    def discount_price_present
+        return unless has_active_discount
+        errors.add(:discount_price, "must be present if this product has an active discount.") if discount_price.nil?
     end
     
     def tags_are_correct_format
         return if tags.nil?
 
-        if Tags.new(tags).invalid_tags?
+        unless Tags.new(tags).valid?
             errors.add(:tags, "Tags must be a comma seperated list with only alphanumeric characters.")
             return 
         end
