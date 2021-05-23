@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
-  get 'products/index'
-  get 'discounts/index'
+  root to: "products#index"
   devise_for :users
 
-  resources :discounts
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  resources :discounts, :products
+  get '/products/purchase/:id', to: "products#purchase"
 end

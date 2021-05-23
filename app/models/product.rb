@@ -1,12 +1,12 @@
 class Product < ApplicationRecord
-    validates :title, :body, :tags, :file_location, :price, :discount_price, :active_discount_name, presence: true
-    validates :title, uniqueness: true
+    validates :title, :body, :tags, :file_location, :price, :discount_price, presence: true
     validate :tags_are_correct_format
-    validates :price, format: { with: /\A\d+(?:\.\d{0,2})?\z/ }, numericality: { greater_than: 0 }
-    validates :discount_price, format: { with: /\A\d+(?:\.\d{0,2})?\z/ }, numericality: { greater_than: 0 }
+    validates :price, numericality: { greater_than: 0 }
+    validates :discount_price, numericality: { greater_than: 0 }
     validate :discount_price_less_than_price if :has_active_discount
     validates_inclusion_of :can_be_discounted, in: [true, false]
     validates_inclusion_of :has_active_discount, in: [true, false]
+    belongs_to :discount, optional: true
 
     def apply_discount(discount)
         return unless self.can_be_discounted
@@ -17,12 +17,12 @@ class Product < ApplicationRecord
 
         return if lowest_price == current_discount_price || lowest_price <= 0
 
-        update_discount_attributes(true, discount.name, lowest_price)
+        update_discount_attributes(true, discount, lowest_price)
     end
 
-    def update_discount_attributes(has_discount, name, lowest_price)
+    def update_discount_attributes(has_discount, discount, lowest_price)
         self.update_attribute(:has_active_discount, has_discount)
-        self.update_attribute(:active_discount_name, name)
+        self.update_attribute(:discount, discount)
         self.update_attribute(:discount_price, lowest_price)
     end
 
@@ -37,7 +37,7 @@ class Product < ApplicationRecord
     def disable_discounts
         self.update_attribute(:has_active_discount, false)
         self.update_attribute(:can_be_discounted, false)
-        self.update_attribute(:active_discount_name, "")
+        self.update_attribute(:discount, nil)
         self.update_attribute(:discount_price, self.price)
     end
 
@@ -47,9 +47,11 @@ class Product < ApplicationRecord
     end
 
     def apply_largest_discount
+        return unless self.can_be_discounted
+
         current_discount_price = self.has_active_discount ? self.discount_price : self.price
         lowest_price = current_discount_price
-        best_discount_name = self.has_active_discount ? self.active_discount_name : ""
+        best_discount = self.has_active_discount ? self.discount : nil
 
         Discount.find_each do |discount|
             next unless discount.active
@@ -57,7 +59,7 @@ class Product < ApplicationRecord
             if discount.all_tags
                 new_discount_price = calculate_discount_price(discount)
                 lowest_price = new_discount_price < lowest_price ? new_discount_price : lowest_price
-                best_discount_name = discount.name
+                best_discount = new_discount_price == lowest_price ? discount : best_discount
                 next
             end
 
@@ -67,12 +69,12 @@ class Product < ApplicationRecord
 
             new_discount_price = calculate_discount_price(discount)
             lowest_price = new_discount_price < lowest_price ? new_discount_price : lowest_price
-            best_discount_name = discount.name
+            best_discount = new_discount_price == lowest_price ? discount : best_discount
         end
 
-        return if lowest_price == current_discount_price || lowest_price <= 0
+        return if best_discount.nil? || lowest_price == self.price || lowest_price <= 0
 
-        update_discount_attributes(true, best_discount_name, lowest_price)
+        update_discount_attributes(true, best_discount, lowest_price)
     end
 
     private

@@ -7,7 +7,7 @@ valid:
   can_be_discounted: true
   has_active_discount: true
   file_location: /img/product1
-  active_discount_name: HalfOff
+  discount: percent_discount
 
 no_discount:
   title: Product2
@@ -18,7 +18,6 @@ no_discount:
   can_be_discounted: true
   has_active_discount: false
   file_location: /img/product2
-  active_discount_name: ""
 
 no_tags:
   title: Product3
@@ -29,4 +28,3 @@ no_tags:
   can_be_discounted: true
   has_active_discount: false
   file_location: /img/product3
-  active_discount_name: ""
