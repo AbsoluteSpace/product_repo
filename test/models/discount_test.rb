@@ -26,13 +26,19 @@ class DiscountTest < ActiveSupport::TestCase
   test "percentage greater than 100 gives invalid discount" do
     @percent_discount.discount = 150
     refute @percent_discount.valid?, "Discount should be invalid with > 100 percent discount."
-    assert_not_nil @percent_discount.errors[:name], "Percent discount > 100 should result in error."
+    assert_includes(
+      @percent_discount.errors.details[:discount],
+      { error: Messages::MESSAGES[:discounts][:percent_too_large] }
+    )
   end
 
   test "invalid tags gives invalid discount" do
     @percent_discount.tags = "tag1,tag2,>tag3"
     refute @percent_discount.valid?, "Discount should be invalid when tags are formatted wrong."
-    assert_not_nil @percent_discount.errors[:name], "Tags with wrong format should result in error."
+    assert_includes(
+      @percent_discount.errors.details[:tags],
+      { error: Messages::MESSAGES[:tags][:invalid] }
+    )
   end
 
   test "amount discount can be greater than 100" do

@@ -91,20 +91,20 @@ class Product < ApplicationRecord
         end
 
         if discount_price > price
-            errors.add(:discount_price, "must be less than price.")
+            errors.add(:discount_price, Messages::MESSAGES[:products][:discount][:exceeds_price])
         end
     end
 
     def discount_price_present
         return unless has_active_discount
-        errors.add(:discount_price, "must be present if this product has an active discount.") if discount_price.nil?
+        errors.add(:discount_price, Messages::MESSAGES[:products][:discount][:not_present]) if discount_price.nil?
     end
     
     def tags_are_correct_format
         return if tags.nil?
 
         unless Tags.new(tags).valid?
-            errors.add(:tags, "Tags must be a comma seperated list with only alphanumeric characters.")
+            errors.add(:tags, Messages::MESSAGES[:tags][:invalid])
             return 
         end
     end
