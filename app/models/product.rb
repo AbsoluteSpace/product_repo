@@ -9,6 +9,8 @@ class Product < ApplicationRecord
     validate :discount_price_present
     belongs_to :discount, optional: true
 
+    paginates_per 10
+
     def apply_discount(discount)
         return unless self.can_be_discounted
 

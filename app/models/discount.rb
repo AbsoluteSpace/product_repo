@@ -9,6 +9,8 @@ class Discount < ApplicationRecord
     validates_inclusion_of :active, in: [true, false]
     has_many :products
 
+    paginates_per 10
+
     def update_site_discounts
         Product.find_each do |product|
             next unless product.can_be_discounted

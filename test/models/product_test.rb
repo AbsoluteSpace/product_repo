@@ -50,12 +50,6 @@ class ProductTest < ActiveSupport::TestCase
     )
   end
 
-  test "product can't have active discount without discount price." do
-    @product.discount_price = nil
-    refute @product.valid?, "Product should be invalid when has discount but none given."
-    assert_not_nil @product.errors[:name], "Has active discount without discount price should result in error."
-  end
-
   test "product not discounted by discount without matching tags" do
     @percent_discount.update_site_discounts
 

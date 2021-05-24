@@ -2,7 +2,7 @@ class DiscountsController < ApplicationController
   before_action :verify_is_admin
 
   def index
-      @discounts = Discount.all
+      @discounts = Discount.page(params[:page])
   end
 
   def show
