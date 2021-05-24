@@ -4,7 +4,8 @@
 
 <div class="body">
 <%= link_to "Create new discount", new_discount_path %>
-<a href="/discounts"><h4>See discounts</h4></a>
+<a href="/discounts/active"><h4>See <span class="active-discount">active</span> discounts</h4></a>
+<a href="/discounts"><h4>See all discounts</h4></a>
 <%= link_to "New Product", new_product_path %><br><br>
 <br>
 <%= link_to "Sign out", destroy_user_session_path, method: :delete%>

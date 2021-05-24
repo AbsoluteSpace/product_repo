@@ -46,7 +46,11 @@ class DiscountsController < ApplicationController
       @discount.destroy
   
       redirect_to action: "index"
-    end
+  end
+
+  def active
+    @discounts = Discount.where(:active => true).order('created_at desc').page(params[:page])
+  end
 
   private
 

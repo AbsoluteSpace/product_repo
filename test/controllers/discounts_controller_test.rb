@@ -135,4 +135,11 @@ class DiscountsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     assert_redirected_to "/"
   end
+
+  test "should get active" do
+    sign_in users(:admin)
+
+    get "/discounts/active"
+    assert_response :success
+  end
 end
