@@ -3,7 +3,7 @@ class ProductsController < ApplicationController
   before_action :verify_is_admin, :except => [:index, :show, :purchase]
 
   def index
-    @products = Product.all
+    @products = Product.page(params[:page])
   end
 
   def show

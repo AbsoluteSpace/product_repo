@@ -7,7 +7,7 @@
     <p>No discounts to show.</p>
   <% end %>
   <p>Note: When multiple discounts apply to a product, the discount that provides the largest price reduction is used.</p>
-  </div>
+</div>
 
   <% @discounts.each do |discount| %>
     <div>
@@ -51,4 +51,9 @@
                   data: { confirm: "Are you sure?" } %>
     </div>
   <% end %>
+
+  <div class="body">
+    <%= paginate @discounts, window: 2 %>
+  </div>
+
 </section>
