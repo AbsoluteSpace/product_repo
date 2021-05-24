@@ -26,13 +26,28 @@ class ProductTest < ActiveSupport::TestCase
   test "invalid tags gives invalid product" do
     @product.tags = "tag1,tag2,>tag3"
     refute @product.valid?, "Product should be invalid when tags are formatted wrong."
-    assert_not_nil @product.errors[:name], "Tags with wrong format should result in error."
+    assert_includes(
+      @product.errors.details[:tags],
+      { error: Messages::MESSAGES[:tags][:invalid] }
+    )
   end
 
   test "discount price is not less than price" do
     @product.discount_price = @product.price + 1
     refute @product.valid?, "Product should be invalid when discount price is larger than price."
-    assert_not_nil @product.errors[:name], "Discount price greater than price should result in error."
+    assert_includes(
+      @product.errors.details[:discount_price],
+      { error: Messages::MESSAGES[:products][:discount][:exceeds_price] }
+    )
+  end
+
+  test "product can't have active discount without discount price." do
+    @product.discount_price = nil
+    refute @product.valid?, "Product should be invalid when has discount but none given."
+    assert_includes(
+      @product.errors.details[:discount_price],
+      { error: Messages::MESSAGES[:products][:discount][:not_present] }
+    )
   end
 
   test "product can't have active discount without discount price." do

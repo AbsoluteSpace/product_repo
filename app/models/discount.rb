@@ -50,7 +50,7 @@ class Discount < ApplicationRecord
         return unless percent_discount
 
         if !discount.nil? && discount > 100
-            errors.add(:discount, "Percent discount must be at most 100.")
+            errors.add(:discount, Messages::MESSAGES[:discounts][:percent_too_large])
         end
     end
 
@@ -58,7 +58,7 @@ class Discount < ApplicationRecord
         return if tags.nil?
 
         unless Tags.new(tags).valid?
-            errors.add(:tags, "Tags must be a comma seperated list with only alphanumeric characters.")
+            errors.add(:tags, Messages::MESSAGES[:tags][:invalid])
             return 
         end
     end
