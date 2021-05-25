@@ -11,7 +11,7 @@
 
   <% @discounts.each do |discount| %>
     <div>
-    <h1>Discount <%= discount.id %></h1>
+    <h1><%= discount.name %></h1>
 
     <p> This Discount is
       <% if discount.active%>
