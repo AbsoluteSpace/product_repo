@@ -22,7 +22,7 @@ class Product < ApplicationRecord
 
         remove_cur_discount if refresh
 
-        lowest_price, best_discount = find_best_discount()
+        lowest_price, best_discount = find_best_discount
 
         return if best_discount.nil? || lowest_price == self.price || lowest_price <= 0
 

@@ -16,9 +16,9 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
-    @product.apply_largest_discount
 
     if @product.save
+      @product.apply_largest_discount
       redirect_to @product
     else
       render :new
