@@ -107,7 +107,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
 
   test "should patch update if admin" do
     sign_in users(:admin)
-    @product.update_discount_attributes(false, nil, @product.price)
+    @product.remove_cur_discount
     refute @product.has_active_discount
 
     patch "/products/#{@product.id}", params: {product: @post_product}

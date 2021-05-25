@@ -43,7 +43,7 @@ class Discount < ApplicationRecord
     def remove_discount(product)
         return if product.discount.nil? || (product.discount.id != self.id && !self.all_tags)
 
-        product.update_discount_attributes(false, nil, product.price)
+        product.remove_cur_discount
 
         product.apply_largest_discount
     end

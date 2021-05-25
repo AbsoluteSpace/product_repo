@@ -11,6 +11,21 @@ class Product < ApplicationRecord
 
     paginates_per 10
 
+    def apply_largest_discount(refresh = false)
+        unless self.can_be_discounted
+            disable_discounts
+            return
+        end
+
+        remove_cur_discount if refresh
+
+        lowest_price, best_discount = find_best_discount()
+
+        return if best_discount.nil? || lowest_price == self.price || lowest_price <= 0
+
+        update_discount_attributes(true, best_discount, lowest_price)
+    end
+
     def apply_discount(discount)
         return unless self.can_be_discounted
 
@@ -23,18 +38,8 @@ class Product < ApplicationRecord
         update_discount_attributes(true, discount, lowest_price)
     end
 
-    def update_discount_attributes(has_discount, discount, lowest_price)
-        self.update_attribute(:has_active_discount, has_discount)
-        self.update_attribute(:discount, discount)
-        self.update_attribute(:discount_price, lowest_price)
-    end
-
-    def calculate_discount_price(discount)
-        if discount.percent_discount
-            return self.price - (discount.discount / 100)*self.price
-        else
-            return self.price - discount.discount
-        end
+    def remove_cur_discount
+        update_discount_attributes(false, nil, self.price)
     end
 
     def disable_discounts
@@ -49,40 +54,12 @@ class Product < ApplicationRecord
         apply_largest_discount
     end
 
-    def apply_largest_discount(refresh = false)
-        unless self.can_be_discounted
-            disable_discounts
-            return
+    def calculate_discount_price(discount)
+        if discount.percent_discount
+            return self.price - (discount.discount / 100)*self.price
+        else
+            return self.price - discount.discount
         end
-
-        update_discount_attributes(false, nil, self.price) if refresh
-
-        current_discount_price = self.has_active_discount ? self.discount_price : self.price
-        lowest_price = current_discount_price
-        best_discount = self.has_active_discount ? self.discount : nil
-
-        Discount.find_each do |discount|
-            next unless discount.active
-
-            if discount.all_tags
-                new_discount_price = calculate_discount_price(discount)
-                lowest_price = new_discount_price < lowest_price ? new_discount_price : lowest_price
-                best_discount = new_discount_price == lowest_price ? discount : best_discount
-                next
-            end
-
-            next if self.tags.nil?
-
-            next if (discount.tags.split(",") & self.tags.split(",")).empty?
-
-            new_discount_price = calculate_discount_price(discount)
-            lowest_price = new_discount_price < lowest_price ? new_discount_price : lowest_price
-            best_discount = new_discount_price == lowest_price ? discount : best_discount
-        end
-
-        return if best_discount.nil? || lowest_price == self.price || lowest_price <= 0
-
-        update_discount_attributes(true, best_discount, lowest_price)
     end
 
     private
@@ -109,5 +86,38 @@ class Product < ApplicationRecord
             errors.add(:tags, Messages::MESSAGES[:tags][:invalid])
             return 
         end
+    end
+
+    def find_best_discount
+        current_discount_price = self.has_active_discount ? self.discount_price : self.price
+        lowest_price = current_discount_price
+        best_discount = self.has_active_discount ? self.discount : nil
+
+        Discount.find_each do |discount|
+            next unless discount.active
+
+            if discount.all_tags
+                new_discount_price = calculate_discount_price(discount)
+                lowest_price = new_discount_price < lowest_price ? new_discount_price : lowest_price
+                best_discount = new_discount_price == lowest_price ? discount : best_discount
+                next
+            end
+
+            next if self.tags.nil?
+
+            next if (discount.tags.split(",") & self.tags.split(",")).empty?
+
+            new_discount_price = calculate_discount_price(discount)
+            lowest_price = new_discount_price < lowest_price ? new_discount_price : lowest_price
+            best_discount = new_discount_price == lowest_price ? discount : best_discount
+        end
+
+        return lowest_price, best_discount
+    end
+
+    def update_discount_attributes(has_discount, discount, lowest_price)
+        self.update_attribute(:has_active_discount, has_discount)
+        self.update_attribute(:discount, discount)
+        self.update_attribute(:discount_price, lowest_price)
     end
 end
