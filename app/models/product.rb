@@ -1,13 +1,16 @@
 class Product < ApplicationRecord
-    validates :title, :body, :file_location, :price, presence: true
+    belongs_to :discount, optional: true
+    
+    validates :title, presence: true
+    validates :body, presence: true
+    validates :file_location, presence: true
     validate :tags_are_correct_format
-    validates :price, numericality: { greater_than: 0 }
+    validates :price, presence: true, numericality: { greater_than: 0 }
     validates :discount_price, numericality: { greater_than: 0 }, allow_nil: true
     validates_inclusion_of :can_be_discounted, in: [true, false]
     validates_inclusion_of :has_active_discount, in: [true, false]
     validate :discount_price_less_than_price if :has_active_discount
     validate :discount_price_present
-    belongs_to :discount, optional: true
 
     paginates_per 10
 
@@ -78,7 +81,7 @@ class Product < ApplicationRecord
         return unless has_active_discount
         errors.add(:discount_price, Messages::MESSAGES[:products][:discount][:not_present]) if discount_price.nil?
     end
-    
+
     def tags_are_correct_format
         return if tags.nil?
 

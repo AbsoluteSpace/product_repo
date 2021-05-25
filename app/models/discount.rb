@@ -1,13 +1,15 @@
 class Discount < ApplicationRecord
-    validates :name, :discount, presence: true
-    validates :name, uniqueness: true
+    has_many :products
+    
+    validates :name, presence: true, uniqueness: true
     validates_inclusion_of :percent_discount, in: [true, false]
-    validates :discount, numericality: { greater_than: 0 }
+    validates :discount, presence: true, numericality: { greater_than: 0 }
     validate :percent_discount_is_at_most_100
     validate :tags_are_correct_format
     validates_inclusion_of :all_tags, in: [true, false]
     validates_inclusion_of :active, in: [true, false]
-    has_many :products
+
+    before_destroy :deactive_discount
 
     paginates_per 10
 
@@ -39,6 +41,11 @@ class Discount < ApplicationRecord
     end
 
     private
+
+    def deactive_discount
+        update_attribute(:active, false)
+        update_site_discounts
+    end
 
     def remove_discount(product)
         return if product.discount.nil? || (product.discount.id != self.id && !self.all_tags)

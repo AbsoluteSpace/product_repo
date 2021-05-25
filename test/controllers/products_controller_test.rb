@@ -17,68 +17,8 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should redirect from new if not admin" do
-    get "/products/new"
-    assert_response :redirect
-    assert_redirected_to "/"
-
-    sign_in users(:user)
-    get "/products/new"
-    assert_response :redirect
-    assert_redirected_to "/"
-  end
-
-  test "should get show" do
-    get "/products/#{@product.id}"
-    assert_response :success
-  end
-
-  test "should redirect from create if not admin" do
-    post "/products", params: {product: @post_product}
-    assert_response :redirect
-    assert_redirected_to "/"
-
-    sign_in users(:user)
-    post "/products", params: {product: @post_product}
-    assert_response :redirect
-    assert_redirected_to "/"
-  end
-
-  test "should redirect from edit if not admin" do
-    get "/products/#{@product.id}/edit"
-    assert_response :redirect
-    assert_redirected_to "/"
-
-    sign_in users(:user)
-    get "/products/#{@product.id}/edit"
-    assert_response :redirect
-    assert_redirected_to "/"
-  end
-
-  test "should redirect from update if not admin" do
-    patch "/products/#{@product.id}", params: {product: @post_product}
-    assert_response :redirect
-    assert_redirected_to "/"
-
-    sign_in users(:user)
-    patch "/products/#{@product.id}", params: {product: @post_product}
-    assert_response :redirect
-    assert_redirected_to "/"
-  end
-
-  test "should redirect from destroy if not admin" do
-    delete "/products/#{@product.id}", params: {product: @post_product}
-    assert_response :redirect
-    assert_redirected_to "/"
-
-    sign_in users(:user)
-    delete "/products/#{@product.id}", params: {product: @post_product}
-    assert_response :redirect
-    assert_redirected_to "/"
-  end
-
   test "should get purchase" do
-    get "/products/purchase/#{@product.id}"
+    get "/products/#{@product.id}/purchase"
     assert_response :success
   end
 
@@ -149,5 +89,65 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     follow_redirect!
     assert_response :success
+  end
+
+  test "should redirect from new if not admin" do
+    get "/products/new"
+    assert_response :redirect
+    assert_redirected_to "/"
+
+    sign_in users(:user)
+    get "/products/new"
+    assert_response :redirect
+    assert_redirected_to "/"
+  end
+
+  test "should get show" do
+    get "/products/#{@product.id}"
+    assert_response :success
+  end
+
+  test "should redirect from create if not admin" do
+    post "/products", params: {product: @post_product}
+    assert_response :redirect
+    assert_redirected_to "/"
+
+    sign_in users(:user)
+    post "/products", params: {product: @post_product}
+    assert_response :redirect
+    assert_redirected_to "/"
+  end
+
+  test "should redirect from edit if not admin" do
+    get "/products/#{@product.id}/edit"
+    assert_response :redirect
+    assert_redirected_to "/"
+
+    sign_in users(:user)
+    get "/products/#{@product.id}/edit"
+    assert_response :redirect
+    assert_redirected_to "/"
+  end
+
+  test "should redirect from update if not admin" do
+    patch "/products/#{@product.id}", params: {product: @post_product}
+    assert_response :redirect
+    assert_redirected_to "/"
+
+    sign_in users(:user)
+    patch "/products/#{@product.id}", params: {product: @post_product}
+    assert_response :redirect
+    assert_redirected_to "/"
+  end
+
+  test "should redirect from destroy if not admin" do
+    delete "/products/#{@product.id}", params: {product: @post_product}
+    assert_response :redirect
+    assert_redirected_to "/"
+
+    sign_in users(:user)
+    delete "/products/#{@product.id}", params: {product: @post_product}
+    assert_response :redirect
+    assert_redirected_to "/"
   end
 end

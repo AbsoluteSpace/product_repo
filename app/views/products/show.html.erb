@@ -1,35 +1,36 @@
 <%= render "shared/header" %>
 <div>
-<h1><%= @product.title %></h1>
+  <h1><%= @product.title %></h1>
 
-<% if @product.has_active_discount %>
-  <p>Price: <strike>$<%= @product.price %></strike> $<span class="discount"><%= @product.discount_price %></span></p>
-<% else %>
-  <p>Price: $<%= @product.price %></p>
-<% end %>
-
-<p>Description: <%= @product.body %></p>
-
-<% unless @product.tags.nil? || (current_user.nil? || !current_user.admin?) %>
-  <p>Tags:
-  <% @product.tags.split(",").each do |tag| %>
-    <% if tag == @product.tags.split(",").last%>
-      <%= tag %>
-    <% else %>
-      <%= tag + ", " %>
-    <% end %>
+  <% if @product.has_active_discount %>
+    <p>Price: <strike>$<%= @product.price %></strike> $<span class="discount"><%= @product.discount_price %></span></p>
+  <% else %>
+    <p>Price: $<%= @product.price %></p>
   <% end %>
-  </p>
-<% end %>
 
-<% unless (current_user.nil? || !current_user.admin?)%>
-<%= link_to "Edit", edit_product_path(@product) %>
-<%= link_to "Destroy", product_path(@product),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %>
-                  <% end %>
-<a href="/products/purchase/<%= @product.id%>">Purchase</a>
+  <p>Description: <%= @product.body %></p>
+
+  <% unless @product.tags.nil? || (current_user.nil? || !current_user.admin?) %>
+    <p>Tags:
+    <% @product.tags.split(",").each do |tag| %>
+      <% if tag == @product.tags.split(",").last%>
+        <%= tag %>
+      <% else %>
+        <%= tag + ", " %>
+      <% end %>
+    <% end %>
+    </p>
+  <% end %>
+
+  <% unless (current_user.nil? || !current_user.admin?)%>
+  <%= link_to "Edit", edit_product_path(@product) %>
+  <%= link_to "Destroy", product_path(@product),
+                    method: :delete,
+                    data: { confirm: "Are you sure?" } %>
+                    <% end %>
+  <%= link_to "Purchase", purchase_product_path(@product) %>
 </div>
+
 <div class="column zoom">
   <img src="<%= @product.file_location%>" alt="<%=@product.body%>">
 </div>
