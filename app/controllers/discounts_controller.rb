@@ -41,8 +41,6 @@ class DiscountsController < ApplicationController
 
   def destroy
       @discount = Discount.find(params[:id])
-      @discount.update_attribute(:active, false)
-      @discount.update_site_discounts
       @discount.destroy
   
       redirect_to action: "index"

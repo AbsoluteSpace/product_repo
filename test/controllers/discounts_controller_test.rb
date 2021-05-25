@@ -9,16 +9,17 @@ class DiscountsControllerTest < ActionDispatch::IntegrationTest
     @percent_discount = discounts(:percent_discount)
     @amount_discount = discounts(:amount_discount)
     @post_discount = {name: "10off", percent_discount: true, discount: 10, tags: "tag1,tag4", all_tags: false, active: false}
+    @product = products(:valid)
   end
 
-  test "should get index" do
+  test "should get index if admin" do
     sign_in users(:admin)
 
     get "/discounts"
     assert_response :success
   end
 
-  test "should get show" do
+  test "should get show if admin" do
     sign_in users(:admin)
 
     get "/discounts/#{@percent_discount.id}"
@@ -81,6 +82,28 @@ class DiscountsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should remove discount from product when deleted" do
+    sign_in users(:admin)
+
+    @product.reload
+    assert @product.has_active_discount
+
+    delete "/discounts/#{@percent_discount.id}"
+    assert_response :redirect
+    follow_redirect!
+    assert_response :success
+
+    @product.reload
+    refute @product.has_active_discount
+  end
+
+  test "should get active if admin" do
+    sign_in users(:admin)
+
+    get "/discounts/active"
+    assert_response :success
+  end
+
   test "should redirect from new if not admin" do
     get "/discounts/new"
     assert_response :redirect
@@ -134,12 +157,5 @@ class DiscountsControllerTest < ActionDispatch::IntegrationTest
     delete "/discounts/#{@percent_discount.id}", params: {discount: @post_discount}
     assert_response :redirect
     assert_redirected_to "/"
-  end
-
-  test "should get active" do
-    sign_in users(:admin)
-
-    get "/discounts/active"
-    assert_response :success
   end
 end

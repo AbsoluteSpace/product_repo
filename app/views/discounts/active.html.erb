@@ -2,53 +2,53 @@
 
 <section>
 
-<div class="body">
-  <% if @discounts.length == 0%>
-    <p>No discounts to show.</p>
-  <% end %>
-  <p>Note: When multiple discounts apply to a product, the discount that provides the largest price reduction is used.</p>
-</div>
+  <div class="body">
+    <% if @discounts.length == 0%>
+      <p>No discounts to show.</p>
+    <% end %>
+    <p>Note: When multiple discounts apply to a product, the discount that provides the largest price reduction is used.</p>
+  </div>
 
   <% @discounts.each do |discount| %>
     <div>
-    <h1>Discount <%= discount.id %></h1>
+      <h1>Discount <%= discount.id %></h1>
 
-    <p> This Discount is
-    <% if discount.active%>
-    <span class="active-discount"> ACTIVE.</span>
-    <% else %>
-    <span class="inactive-discount"> NOT ACTIVE.</span>
-    <% end %>
-    </p>
+      <p> This Discount is
+        <% if discount.active%>
+          <span class="active-discount"> ACTIVE.</span>
+        <% else %>
+          <span class="inactive-discount"> NOT ACTIVE.</span>
+        <% end %>
+      </p>
 
-    <p>
-    <% if discount.all_tags%>
-      All products
-    <% elsif discount.tags.nil? && discount.tags.empty? %>
-      No products
-    <% else %>
-      <% unless discount.tags.nil? %>
-        Tags:
-        <% discount.tags.split(",").each do |tag| %>
-          <% if tag == discount.tags.split(",").last%>
-            <%= tag %>
-          <% else %>
-            <%= tag + ", "%>
+      <p>
+        <% if discount.all_tags%>
+          All products
+        <% elsif discount.tags.nil? && discount.tags.empty? %>
+          No products
+        <% else %>
+          <% unless discount.tags.nil? %>
+            Tags:
+            <% discount.tags.split(",").each do |tag| %>
+              <% if tag == discount.tags.split(",").last%>
+                <%= tag %>
+              <% else %>
+                <%= tag + ", "%>
+              <% end %>
+            <% end %>
           <% end %>
         <% end %>
-      <% end %>
-    <% end %>
-    <% if discount.percent_discount %>
-      are discounted by %<%= discount.discount %>
-    <% else %>
-      are discounted by $<%= discount.discount %>
-    <% end %>
-    </p>
+        <% if discount.percent_discount %>
+          are discounted by %<%= discount.discount %>
+        <% else %>
+          are discounted by $<%= discount.discount %>
+        <% end %>
+      </p>
 
-    <%= link_to "Edit", edit_discount_path(discount) %></li>
-    <%= link_to "Destroy", discount_path(discount),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %>
+      <%= link_to "Edit", edit_discount_path(discount) %></li>
+      <%= link_to "Destroy", discount_path(discount),
+                    method: :delete,
+                    data: { confirm: "Are you sure?" } %>
     </div>
   <% end %>
 

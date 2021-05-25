@@ -1,42 +1,42 @@
 <%= render "shared/header" %>
 <div>
-    <h1>Discount <%= @discount.id %></h1>
+  <h1>Discount <%= @discount.id %></h1>
 
-    <p> This Discount is
+  <p> This Discount is
     <% if @discount.active%>
-    <span class="active-discount"> ACTIVE.</span>
+      <span class="active-discount"> ACTIVE.</span>
     <% else %>
-    <span class="inactive-discount"> NOT ACTIVE.</span>
+      <span class="inactive-discount"> NOT ACTIVE.</span>
     <% end %>
-    </p>
+  </p>
 
-    <p>
+  <p>
     <% if @discount.all_tags%>
-    All items
+      All items
     <% else %>
-    <% unless @discount.tags.nil?%>
-      Tags:
-      <% @discount.tags.split(",").each do |tag| %>
-        <% if tag == @discount.tags.split(",").last%>
-            <%= tag %>
-        <% else %>
-            <%= tag + ", " %>
+      <% unless @discount.tags.nil?%>
+        Tags:
+        <% @discount.tags.split(",").each do |tag| %>
+          <% if tag == @discount.tags.split(",").last%>
+              <%= tag %>
+          <% else %>
+              <%= tag + ", " %>
+          <% end %>
         <% end %>
       <% end %>
-    <% end %>
     <% end %>
     <% if @discount.percent_discount %>
       are discounted by <%= @discount.discount %>%
     <% else %>
       are discounted by $<%= @discount.discount %>
     <% end %>
-    </p>
+  </p>
 
-    <ul>
-      <li><%= link_to "Edit", edit_discount_path(@discount) %></li>
-      <li><%= link_to "Destroy", discount_path(@discount),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %></li>
-    </ul>
+  <ul>
+    <li><%= link_to "Edit", edit_discount_path(@discount) %></li>
+    <li><%= link_to "Destroy", discount_path(@discount),
+                method: :delete,
+                data: { confirm: "Are you sure?" } %></li>
+  </ul>
 
-   </div>
+</div>
